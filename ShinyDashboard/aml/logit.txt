@@ -1,0 +1,132 @@
+[1] "Campo_Rupestre"
+
+Call:
+glm(formula = Campo_Rupestre ~ lat + long + alt + temp2m + humidity + 
+    precip + atm + wind + m.fapar + lat:long + lat:alt + lat:temp2m + 
+    lat:humidity + lat:precip + lat:atm + lat:wind + lat:m.fapar + 
+    long:alt + long:temp2m + long:humidity + long:precip + long:atm + 
+    long:wind + long:m.fapar + alt:temp2m + alt:humidity + alt:precip + 
+    alt:wind + alt:m.fapar + temp2m:humidity + temp2m:precip + 
+    temp2m:atm + temp2m:wind + temp2m:m.fapar + humidity:precip + 
+    humidity:atm + humidity:wind + humidity:m.fapar + precip:atm + 
+    precip:wind + precip:m.fapar + atm:m.fapar + wind:m.fapar + 
+    lat:long:alt + lat:long:temp2m + lat:long:humidity + lat:long:wind + 
+    lat:alt:temp2m + lat:alt:humidity + lat:alt:wind + lat:alt:m.fapar + 
+    lat:temp2m:humidity + lat:humidity:atm + lat:humidity:m.fapar + 
+    lat:precip:atm + lat:precip:wind + lat:precip:m.fapar + lat:wind:m.fapar + 
+    long:alt:temp2m + long:alt:wind + long:temp2m:humidity + 
+    long:temp2m:atm + long:temp2m:wind + long:temp2m:m.fapar + 
+    long:humidity:precip + long:humidity:atm + long:humidity:wind + 
+    long:precip:atm + long:precip:wind + alt:temp2m:precip + 
+    alt:temp2m:wind + alt:humidity:m.fapar + alt:precip:m.fapar + 
+    temp2m:humidity:precip + temp2m:humidity:wind + temp2m:precip:atm + 
+    temp2m:precip:wind + temp2m:precip:m.fapar + temp2m:atm:m.fapar + 
+    temp2m:wind:m.fapar + humidity:wind:m.fapar, family = "binomial", 
+    data = df)
+
+Deviance Residuals: 
+     Min        1Q    Median        3Q       Max  
+-2.87409  -0.07044   0.40339   0.68349   1.89654  
+
+Coefficients:
+                         Estimate Std. Error z value Pr(>|z|)    
+(Intercept)            -1.376e+04  4.188e+03  -3.287 0.001014 ** 
+lat                     4.247e+01  2.407e+01   1.765 0.077612 .  
+long                    2.804e+02  6.793e+01   4.128 3.66e-05 ***
+alt                     1.234e+00  2.491e-01   4.954 7.27e-07 ***
+temp2m                  3.725e+02  1.029e+02   3.621 0.000293 ***
+humidity               -4.869e+01  4.618e+01  -1.054 0.291701    
+precip                  2.138e+03  5.531e+02   3.865 0.000111 ***
+atm                     3.491e+02  1.139e+02   3.064 0.002181 ** 
+wind                    1.468e+01  4.115e+00   3.566 0.000362 ***
+m.fapar                 1.135e+00  4.255e+00   0.267 0.789655    
+lat:long               -5.613e-01  1.435e-01  -3.913 9.13e-05 ***
+lat:alt                -1.464e-02  2.730e-03  -5.361 8.28e-08 ***
+lat:temp2m             -1.222e+00  3.376e-01  -3.620 0.000295 ***
+lat:humidity            6.764e-01  3.674e-01   1.841 0.065604 .  
+lat:precip             -1.629e+01  3.857e+00  -4.224 2.40e-05 ***
+lat:atm                 2.628e-01  6.962e-01   0.377 0.705820    
+lat:wind               -7.612e-02  1.628e-02  -4.677 2.91e-06 ***
+lat:m.fapar            -1.020e-01  2.235e-02  -4.562 5.06e-06 ***
+long:alt               -7.016e-03  2.528e-03  -2.775 0.005512 ** 
+long:temp2m            -6.357e+00  1.618e+00  -3.930 8.49e-05 ***
+long:humidity          -1.005e+00  5.876e-01  -1.710 0.087315 .  
+long:precip            -2.652e+00  1.632e+00  -1.625 0.104248    
+long:atm               -7.656e+00  1.818e+00  -4.212 2.54e-05 ***
+long:wind              -1.768e-01  5.160e-02  -3.426 0.000612 ***
+long:m.fapar           -5.083e-02  2.294e-02  -2.215 0.026726 *  
+alt:temp2m             -3.568e-02  7.827e-03  -4.558 5.17e-06 ***
+alt:humidity           -1.514e-03  1.291e-03  -1.173 0.240978    
+alt:precip             -1.035e-01  2.033e-02  -5.090 3.58e-07 ***
+alt:wind               -2.547e-03  1.011e-03  -2.520 0.011724 *  
+alt:m.fapar             1.062e-03  5.609e-04   1.894 0.058250 .  
+temp2m:humidity         9.134e-01  3.358e-01   2.720 0.006524 ** 
+temp2m:precip          -3.814e+01  1.330e+01  -2.867 0.004139 ** 
+temp2m:atm             -9.699e+00  2.530e+00  -3.834 0.000126 ***
+temp2m:wind            -3.653e-01  1.036e-01  -3.526 0.000422 ***
+temp2m:m.fapar          2.863e-01  2.613e-01   1.096 0.273118    
+humidity:precip         3.347e+00  7.249e-01   4.617 3.89e-06 ***
+humidity:atm            8.129e-01  1.328e+00   0.612 0.540587    
+humidity:wind           1.414e-02  2.686e-02   0.526 0.598654    
+humidity:m.fapar       -3.939e-02  1.429e-02  -2.757 0.005837 ** 
+precip:atm             -6.006e+01  1.543e+01  -3.892 9.96e-05 ***
+precip:wind            -1.247e+00  3.697e-01  -3.373 0.000743 ***
+precip:m.fapar         -1.521e+00  3.420e-01  -4.446 8.76e-06 ***
+atm:m.fapar             4.026e-01  1.688e-01   2.386 0.017050 *  
+wind:m.fapar           -4.209e-02  1.801e-02  -2.337 0.019422 *  
+lat:long:alt            3.465e-05  1.572e-05   2.204 0.027498 *  
+lat:long:temp2m         1.406e-02  3.710e-03   3.790 0.000151 ***
+lat:long:humidity       1.926e-03  9.589e-04   2.009 0.044553 *  
+lat:long:wind           6.368e-04  1.727e-04   3.687 0.000227 ***
+lat:alt:temp2m          1.026e-04  4.077e-05   2.517 0.011837 *  
+lat:alt:humidity        1.090e-04  2.261e-05   4.819 1.44e-06 ***
+lat:alt:wind            1.480e-05  6.851e-06   2.160 0.030756 *  
+lat:alt:m.fapar         1.091e-05  4.826e-06   2.262 0.023718 *  
+lat:temp2m:humidity     8.039e-03  3.217e-03   2.499 0.012461 *  
+lat:humidity:atm       -2.822e-02  1.111e-02  -2.540 0.011083 *  
+lat:humidity:m.fapar    8.586e-04  2.555e-04   3.360 0.000779 ***
+lat:precip:atm          4.186e-01  1.047e-01   3.997 6.42e-05 ***
+lat:precip:wind         6.414e-03  2.113e-03   3.036 0.002398 ** 
+lat:precip:m.fapar      3.659e-03  1.640e-03   2.231 0.025668 *  
+lat:wind:m.fapar        1.396e-04  7.578e-05   1.842 0.065498 .  
+long:alt:temp2m         1.936e-04  7.902e-05   2.450 0.014266 *  
+long:alt:wind           1.048e-05  6.336e-06   1.655 0.098018 .  
+long:temp2m:humidity   -1.243e-02  3.842e-03  -3.236 0.001213 ** 
+long:temp2m:atm         1.761e-01  4.106e-02   4.288 1.80e-05 ***
+long:temp2m:wind        4.826e-03  1.298e-03   3.718 0.000201 ***
+long:temp2m:m.fapar     1.889e-03  9.204e-04   2.053 0.040098 *  
+long:humidity:precip   -6.439e-03  2.584e-03  -2.492 0.012718 *  
+long:humidity:atm       3.574e-02  1.657e-02   2.157 0.031031 *  
+long:humidity:wind      5.186e-04  2.907e-04   1.784 0.074448 .  
+long:precip:atm         9.255e-02  4.903e-02   1.888 0.059064 .  
+long:precip:wind       -2.188e-03  1.526e-03  -1.434 0.151680    
+alt:temp2m:precip       3.931e-03  7.647e-04   5.141 2.74e-07 ***
+alt:temp2m:wind         6.261e-05  2.851e-05   2.196 0.028086 *  
+alt:humidity:m.fapar   -3.047e-05  1.024e-05  -2.976 0.002917 ** 
+alt:precip:m.fapar      1.508e-04  6.801e-05   2.218 0.026556 *  
+temp2m:humidity:precip -1.061e-01  2.735e-02  -3.880 0.000105 ***
+temp2m:humidity:wind   -2.191e-03  9.307e-04  -2.355 0.018541 *  
+temp2m:precip:atm       1.061e+00  3.639e-01   2.916 0.003549 ** 
+temp2m:precip:wind      4.439e-02  1.281e-02   3.465 0.000530 ***
+temp2m:precip:m.fapar   5.386e-02  1.227e-02   4.390 1.14e-05 ***
+temp2m:atm:m.fapar     -2.017e-02  8.636e-03  -2.336 0.019511 *  
+temp2m:wind:m.fapar     9.623e-04  4.758e-04   2.023 0.043116 *  
+humidity:wind:m.fapar   1.720e-04  9.538e-05   1.803 0.071363 .  
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 991.60  on 864  degrees of freedom
+Residual deviance: 724.15  on 783  degrees of freedom
+AIC: 888.15
+
+Number of Fisher Scoring iterations: 7
+
+      predict
+Actual FALSE TRUE
+     0    38   32
+     1    20  169
+  threshold       AUC omission.rate sensitivity specificity prop.correct     Kappa
+1       0.5 0.7185185     0.1058201   0.8941799   0.5428571    0.7992278 0.4619687
+[1] "Cerrado_lato_sensu"

@@ -7,6 +7,10 @@ shinyServer(function(input, output){
     hist(faithful$eruptions, breaks = input$bins)
   })
   
+  output$logitPlot <- renderPlot({
+    hist(faithful$eruptions, breaks = input$bins)
+  })
+  
   output$msgOutput <- renderMenu({
     msgs <- apply(read.csv("messages.csv") , 1, function(row){
       messageItem(from = row[["from"]], message = row[["message"]])

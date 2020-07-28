@@ -57,7 +57,20 @@ body <- dashboardBody(
     tabItems(
         tabItem(
             tabName = "dashboard",
-            h1("Histogram plot")
+            fluidRow(
+                tabBox(
+                    tabPanel(title = "Logistic Regrssion", status = "primary", 
+                            solidHeader = T, plotOutput("logitPlot")),
+                            #histogram is ID in output variable which we will be using in 
+                            #server code
+                    tabPanel(title = "Summary")
+                )
+                # box(title = "box 2", status = "warning",
+                # "you can add body text directly like this for this box", br()
+                # "2nd text"
+                #     solidHeader = T, sliderInput("bins", "Number of Breaks", 1, 100, 50),    # here bins is a ID
+                # textInput("input_id", "Search Opportunities", "12345"))
+            )
         ),
         tabItem(
             tabName = "detailedAnalysis",

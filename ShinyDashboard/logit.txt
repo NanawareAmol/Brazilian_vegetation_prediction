@@ -1,0 +1,443 @@
+[1] "Campo_Rupestre"
+
+Call:
+glm(formula = Campo_Rupestre ~ lat + long + alt + temp2m + humidity, 
+    family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.2473  -0.8395   0.6254   0.7291   1.7818  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -1.764e+01  4.671e+00  -3.776 0.000159 ***
+lat          4.996e-02  1.486e-02   3.361 0.000776 ***
+long         4.263e-02  7.667e-03   5.560 2.69e-08 ***
+alt          2.923e-03  4.965e-04   5.888 3.91e-09 ***
+temp2m       3.926e-01  1.045e-01   3.757 0.000172 ***
+humidity     5.532e-02  2.070e-02   2.672 0.007532 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 991.60  on 864  degrees of freedom
+Residual deviance: 913.63  on 859  degrees of freedom
+AIC: 925.63
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE TRUE
+     0    21   49
+     1    23  166
+'data.frame':	865 obs. of  29 variables:
+ $ lat                                  : int  2 5 7 9 11 11 12 12 12 13 ...
+ $ long                                 : int  24 25 24 26 16 44 21 51 52 49 ...
+ $ alt                                  : num  428.9 82.7 50.8 80.2 34.1 ...
+ $ temp2m                               : num  24.6 27.1 26.3 25.9 25.5 ...
+ $ humidity                             : num  76.5 75.2 84.2 86.2 91 ...
+ $ precip                               : num  5.19 4.69 5.38 5.43 6.96 6.62 6.4 7.78 7.48 7.13 ...
+ $ atm                                  : num  36 36 36.1 36.1 36.1 ...
+ $ wind                                 : num  76 68.6 52.2 69.6 107.6 ...
+ $ m.fapar                              : num  117 82.6 132.3 155.3 143.5 ...
+ $ Campo_Rupestre                       : int  1 0 0 0 0 1 1 1 0 1 ...
+ $ Cerrado_lato_sensu                   : int  1 1 1 0 0 1 1 1 0 1 ...
+ $ Floresta_de_Terra_Firme              : int  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_Estacional_Semidecidual     : int  1 0 1 0 1 1 1 1 0 1 ...
+ $ Floresta_Ombrofila_Densa             : int  1 0 1 0 1 1 1 1 1 1 ...
+ $ Restinga                             : int  1 0 1 0 0 1 1 1 1 1 ...
+ $ Savana_Estepica                      : int  0 1 1 0 0 0 1 1 1 1 ...
+ $ Floresta_de_Igapo                    : int  0 1 0 1 0 1 1 1 0 1 ...
+ $ Floresta_de_Varzea                   : int  0 1 1 0 0 1 1 1 0 1 ...
+ $ Campo_de_Varzea                      : int  0 0 1 0 0 0 1 0 0 1 ...
+ $ Campo_de_Altitude                    : int  0 0 0 0 1 0 1 1 0 1 ...
+ $ Vegetacao_Sobre_Afloramentos_Rochosos: int  0 0 0 0 1 0 1 0 0 0 ...
+ $ Savana_Amazonica                     : int  0 0 0 0 0 1 1 1 0 1 ...
+ $ Campinarana                          : int  0 0 0 0 0 0 1 1 1 1 ...
+ $ Campo_Limpo                          : int  0 0 0 0 0 0 1 0 0 0 ...
+ $ Floresta_Estacional_Decidual         : int  0 0 0 0 0 0 1 0 0 1 ...
+ $ Floresta_Estacional_Perenifolia      : int  0 0 0 0 0 0 1 1 0 1 ...
+ $ Floresta_Ombrofila_Mista             : int  0 0 0 0 0 0 1 0 0 1 ...
+ $ Palmeiral                            : int  0 0 0 0 0 0 1 0 0 0 ...
+ $ Manguezal                            : int  0 0 0 0 0 0 0 0 0 0 ...
+'data.frame':	259 obs. of  29 variables:
+ $ lat                                  : num  0.684 0.684 0.684 0.684 0.684 ...
+ $ long                                 : num  0.539 0.553 0.566 0.579 0.605 ...
+ $ alt                                  : num  0.242 0.306 0.351 0.393 0.391 ...
+ $ temp2m                               : num  0.645 0.656 0.631 0.601 0.585 ...
+ $ humidity                             : num  0.437 0.398 0.41 0.444 0.459 ...
+ $ precip                               : num  0.352 0.34 0.34 0.338 0.338 ...
+ $ atm                                  : num  0.58 0.58 0.58 0.58 0.58 ...
+ $ wind                                 : num  0.199 0.206 0.21 0.215 0.243 ...
+ $ m.fapar                              : num  0.358 0.373 0.439 0.446 0.41 ...
+ $ Campo_Rupestre                       : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Cerrado_lato_sensu                   : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_de_Terra_Firme              : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_Estacional_Semidecidual     : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_Ombrofila_Densa             : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Restinga                             : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Savana_Estepica                      : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_de_Igapo                    : num  1 1 1 0 0 0 1 1 1 1 ...
+ $ Floresta_de_Varzea                   : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Campo_de_Varzea                      : num  1 1 1 1 0 0 1 1 1 1 ...
+ $ Campo_de_Altitude                    : num  1 1 0 0 0 1 1 1 1 1 ...
+ $ Vegetacao_Sobre_Afloramentos_Rochosos: num  1 1 1 1 0 0 1 1 1 1 ...
+ $ Savana_Amazonica                     : num  1 1 1 1 0 1 1 1 1 1 ...
+ $ Campinarana                          : num  1 1 0 0 0 0 1 1 1 1 ...
+ $ Campo_Limpo                          : num  1 1 1 1 0 1 1 1 1 1 ...
+ $ Floresta_Estacional_Decidual         : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Floresta_Estacional_Perenifolia      : num  1 1 1 1 1 0 1 1 1 1 ...
+ $ Floresta_Ombrofila_Mista             : num  1 1 1 1 1 1 1 1 1 1 ...
+ $ Palmeiral                            : num  1 1 1 1 0 0 1 1 1 1 ...
+ $ Manguezal                            : num  1 1 0 1 0 0 0 1 1 1 ...
+           [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]      [,9]     [,10]
+ [1,] 1.0000000 0.7451488 0.9987931 0.9015187 0.9487873 0.9997356 0.9607474 0.9978831 0.9991679 0.9909690
+ [2,] 0.7451488 1.0000000 0.7656598 0.9489656 0.9024343 0.7539088 0.5946794 0.7014015 0.7367337 0.7919992
+ [3,] 0.9987931 0.7656598 1.0000000 0.9178941 0.9612590 0.9996532 0.9461310 0.9944836 0.9990019 0.9963236
+ [4,] 0.9015187 0.9489656 0.9178941 1.0000000 0.9912629 0.9088895 0.7694654 0.8721670 0.8997166 0.9390288
+ [5,] 0.9487873 0.9024343 0.9612590 0.9912629 1.0000000 0.9545546 0.8362597 0.9272669 0.9485913 0.9761692
+ [6,] 0.9997356 0.7539088 0.9996532 0.9088895 0.9545546 1.0000000 0.9541928 0.9967000 0.9994640 0.9937687
+ [7,] 0.9607474 0.5946794 0.9461310 0.7694654 0.8362597 0.9541928 1.0000000 0.9705574 0.9539558 0.9160063
+ [8,] 0.9978831 0.7014015 0.9944836 0.8721670 0.9272669 0.9967000 0.9705574 1.0000000 0.9977492 0.9831730
+ [9,] 0.9991679 0.7367337 0.9990019 0.8997166 0.9485913 0.9994640 0.9539558 0.9977492 1.0000000 0.9931918
+[10,] 0.9909690 0.7919992 0.9963236 0.9390288 0.9761692 0.9937687 0.9160063 0.9831730 0.9931918 1.0000000
+[11,] 0.9985287 0.7188422 0.9974287 0.8876671 0.9398031 0.9984320 0.9583658 0.9988767 0.9996302 0.9901162
+[12,] 0.9994643 0.7357194 0.9988924 0.8982317 0.9473094 0.9995611 0.9565119 0.9981896 0.9999543 0.9923493
+[13,] 0.9968540 0.7727762 0.9995198 0.9246259 0.9663877 0.9984099 0.9362320 0.9915988 0.9979777 0.9984489
+[14,] 0.9989757 0.7148872 0.9963082 0.8816491 0.9344134 0.9981049 0.9676689 0.9998006 0.9987011 0.9861867
+[15,] 0.9957067 0.7782159 0.9990328 0.9286505 0.9692037 0.9975666 0.9315244 0.9897896 0.9970712 0.9991115
+[16,] 0.9843899 0.8228541 0.9916872 0.9564590 0.9865965 0.9880109 0.8990634 0.9730613 0.9861284 0.9984807
+[17,] 0.9977399 0.7307842 0.9982587 0.8978537 0.9477033 0.9984027 0.9487123 0.9967531 0.9996486 0.9937874
+[18,] 0.9763226 0.8320388 0.9855827 0.9629136 0.9897851 0.9808521 0.8809800 0.9632247 0.9789348 0.9959692
+[19,] 0.9805392 0.6239304 0.9700114 0.8044243 0.8702552 0.9760307 0.9938794 0.9892456 0.9773786 0.9466202
+[20,] 0.9771604 0.6009518 0.9675382 0.7916890 0.8619433 0.9732391 0.9834470 0.9884296 0.9767855 0.9456228
+          [,11]     [,12]     [,13]     [,14]     [,15]     [,16]     [,17]     [,18]     [,19]     [,20]
+ [1,] 0.9985287 0.9994643 0.9968540 0.9989757 0.9957067 0.9843899 0.9977399 0.9763226 0.9805392 0.9771604
+ [2,] 0.7188422 0.7357194 0.7727762 0.7148872 0.7782159 0.8228541 0.7307842 0.8320388 0.6239304 0.6009518
+ [3,] 0.9974287 0.9988924 0.9995198 0.9963082 0.9990328 0.9916872 0.9982587 0.9855827 0.9700114 0.9675382
+ [4,] 0.8876671 0.8982317 0.9246259 0.8816491 0.9286505 0.9564590 0.8978537 0.9629136 0.8044243 0.7916890
+ [5,] 0.9398031 0.9473094 0.9663877 0.9344134 0.9692037 0.9865965 0.9477033 0.9897851 0.8702552 0.8619433
+ [6,] 0.9984320 0.9995611 0.9984099 0.9981049 0.9975666 0.9880109 0.9984027 0.9808521 0.9760307 0.9732391
+ [7,] 0.9583658 0.9565119 0.9362320 0.9676689 0.9315244 0.8990634 0.9487123 0.8809800 0.9938794 0.9834470
+ [8,] 0.9988767 0.9981896 0.9915988 0.9998006 0.9897896 0.9730613 0.9967531 0.9632247 0.9892456 0.9884296
+ [9,] 0.9996302 0.9999543 0.9979777 0.9987011 0.9970712 0.9861284 0.9996486 0.9789348 0.9773786 0.9767855
+[10,] 0.9901162 0.9923493 0.9984489 0.9861867 0.9991115 0.9984807 0.9937874 0.9959692 0.9466202 0.9456228
+[11,] 1.0000000 0.9996496 0.9959921 0.9992874 0.9948032 0.9815765 0.9994461 0.9736117 0.9813009 0.9817815
+[12,] 0.9996496 1.0000000 0.9975825 0.9990805 0.9965704 0.9851413 0.9993792 0.9776096 0.9790099 0.9779497
+[13,] 0.9959921 0.9975825 1.0000000 0.9937630 0.9999074 0.9946799 0.9978364 0.9898213 0.9628634 0.9613646
+[14,] 0.9992874 0.9990805 0.9937630 1.0000000 0.9921724 0.9771510 0.9976200 0.9679171 0.9868452 0.9853172
+[15,] 0.9948032 0.9965704 0.9999074 0.9921724 1.0000000 0.9959255 0.9970912 0.9916299 0.9591249 0.9577233
+[16,] 0.9815765 0.9851413 0.9946799 0.9771510 0.9959255 1.0000000 0.9864277 0.9990717 0.9308443 0.9280194
+[17,] 0.9994461 0.9993792 0.9978364 0.9976200 0.9970912 0.9864277 1.0000000 0.9798232 0.9744067 0.9755694
+[18,] 0.9736117 0.9776096 0.9898213 0.9679171 0.9916299 0.9990717 0.9798232 1.0000000 0.9154150 0.9127725
+[19,] 0.9813009 0.9790099 0.9628634 0.9868452 0.9591249 0.9308443 0.9744067 0.9154150 1.0000000 0.9965036
+[20,] 0.9817815 0.9779497 0.9613646 0.9853172 0.9577233 0.9280194 0.9755694 0.9127725 0.9965036 1.0000000
+         [,1]      [,2]      [,3]      [,4]      [,5]      [,6]      [,7]      [,8]      [,9]     [,10]
+607 0.7884493 0.9511692 0.7006735 0.8201816 0.8208601 0.7292427 0.7591974 0.4625046 0.5154035 0.5278896
+608 0.8076290 0.9664853 0.7309158 0.8597837 0.8534082 0.7550192 0.7618871 0.5000727 0.5569109 0.5807321
+609 0.8382414 0.9829661 0.7794212 0.9118696 0.8988808 0.7963857 0.7665918 0.5662270 0.6280582 0.6691450
+610 0.8312329 0.9799239 0.7683139 0.9011802 0.8892098 0.7869006 0.7654623 0.5503858 0.6112651 0.6486154
+611 0.8171137 0.9725286 0.7459316 0.8774135 0.8683805 0.7678140 0.7632847 0.5197351 0.5783300 0.6077075
+        [,11]     [,12]     [,13]     [,14]     [,15]     [,16]     [,17]     [,18]     [,19]     [,20]
+607 0.4238057 0.5482334 0.6028086 0.5430790 0.5895305 0.6231424 0.3996834 0.5297206 0.3127701 0.1075024
+608 0.4677419 0.5869204 0.6440280 0.5779468 0.6331529 0.6722034 0.4479355 0.5924523 0.3405627 0.1319069
+609 0.5462227 0.6525096 0.7116777 0.6375423 0.7048761 0.7500261 0.5351031 0.6953212 0.3923873 0.1864145
+610 0.5273434 0.6370978 0.6960521 0.6234663 0.6883080 0.7324123 0.5140594 0.6717840 0.3796037 0.1718449
+611 0.4909514 0.6067524 0.6647931 0.5958889 0.6551612 0.6964984 0.4736128 0.6242064 0.3555536 0.1464423
+  [1] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+  [5] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+  [9] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [13] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [17] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [21] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [25] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [29] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [33] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [37] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [41] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [45] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [49] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [53] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [57] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [61] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [65] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [69] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [73] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [77] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [81] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [85] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [89] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [93] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+ [97] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[101] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[105] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[109] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[113] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[117] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[121] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[125] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[129] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[133] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[137] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[141] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[145] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[149] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[153] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[157] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[161] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[165] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[169] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[173] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[177] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[181] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[185] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[189] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[193] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[197] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[201] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[205] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[209] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[213] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[217] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[221] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[225] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[229] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[233] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[237] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[241] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[245] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[249] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[253] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+[257] "Cerrado_lato_sensu" "Cerrado_lato_sensu" "Cerrado_lato_sensu"
+607   0.008171   3.501 0.000463 ***
+precip        0.633667   0.103902   6.099 1.07e-09 ***
+atm           2.295833   0.319671   7.182 6.88e-13 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1198.4  on 864  degrees of freedom
+Residual deviance: 1123.1  on 860  degrees of freedom
+AIC: 1133.1
+
+Number of Fisher Scoring iterations: 3
+
+      predict
+Actual FALSE TRUE
+     0   109   19
+     1   102   29
+  threshold       AUC omission.rate sensitivity specificity prop.correct      Kappa
+1       0.5 0.5364683      0.778626    0.221374   0.8515625    0.5328185 0.07239899
+[1] "Campo_Limpo"
+
+Call:
+glm(formula = Campo_Limpo ~ lat + alt + precip + atm + wind, 
+    family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.0268  -1.1224   0.6983   0.9125   1.9671  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -3.855e+01  1.221e+01  -3.157 0.001592 ** 
+lat          1.145e-01  2.679e-02   4.276  1.9e-05 ***
+alt          1.115e-03  3.177e-04   3.509 0.000449 ***
+precip       3.101e-01  8.475e-02   3.659 0.000253 ***
+atm          9.048e-01  3.169e-01   2.855 0.004300 ** 
+wind         1.367e-02  3.883e-03   3.521 0.000430 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1165.9  on 864  degrees of freedom
+Residual deviance: 1047.8  on 859  degrees of freedom
+AIC: 1059.8
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE TRUE
+     0    76   31
+     1    44  108
+  threshold       AUC omission.rate sensitivity specificity prop.correct     Kappa
+1       0.5 0.7104033     0.2894737   0.7105263   0.7102804    0.7104247 0.4133724
+[1] "Floresta_Estacional_Decidual"
+
+Call:
+glm(formula = Floresta_Estacional_Decidual ~ lat + long + alt + 
+    temp2m + atm + m.fapar, family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.9770  -1.1682   0.7300   0.9161   2.3760  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -4.616e+01  1.368e+01  -3.373 0.000743 ***
+lat          1.372e-01  2.719e-02   5.048 4.46e-07 ***
+long         3.064e-02  7.883e-03   3.886 0.000102 ***
+alt          1.734e-03  5.654e-04   3.067 0.002164 ** 
+temp2m       2.461e-01  1.039e-01   2.369 0.017846 *  
+atm          8.659e-01  4.188e-01   2.068 0.038679 *  
+m.fapar      2.720e-02  5.435e-03   5.004 5.60e-07 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1161.0  on 864  degrees of freedom
+Residual deviance: 1060.1  on 858  degrees of freedom
+AIC: 1074.1
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE TRUE
+     0    72   30
+     1    52  105
+  threshold       AUC omission.rate sensitivity specificity prop.correct     Kappa
+1       0.5 0.6873361     0.3312102   0.6687898   0.7058824    0.6833977 0.3610326
+[1] "Floresta_Estacional_Perenifolia"
+
+Call:
+glm(formula = Floresta_Estacional_Perenifolia ~ lat + alt + temp2m + 
+    humidity + atm + m.fapar, family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.4920  -1.0248  -0.6847   1.1920   2.2095  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -6.036e+01  1.344e+01  -4.491 7.08e-06 ***
+lat          1.325e-01  2.713e-02   4.884 1.04e-06 ***
+alt          1.379e-03  5.395e-04   2.556  0.01059 *  
+temp2m       1.713e-01  1.050e-01   1.632  0.10273    
+humidity     5.733e-02  2.059e-02   2.784  0.00537 ** 
+atm          1.271e+00  3.874e-01   3.281  0.00103 ** 
+m.fapar      1.559e-02  5.598e-03   2.786  0.00534 ** 
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1160.1  on 864  degrees of freedom
+Residual deviance: 1085.4  on 858  degrees of freedom
+AIC: 1099.4
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE TRUE
+     0   155    6
+     1    94    4
+  threshold       AUC omission.rate sensitivity specificity prop.correct       Kappa
+1       0.5 0.5017746     0.9591837  0.04081633   0.9627329    0.6138996 0.004305705
+[1] "Floresta_Ombrofila_Mista"
+
+Call:
+glm(formula = Floresta_Ombrofila_Mista ~ lat + long + alt + precip + 
+    m.fapar, family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-2.3186  -0.9836   0.4963   0.9181   2.2344  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -7.8356355  0.9313914  -8.413  < 2e-16 ***
+lat          0.0597844  0.0061813   9.672  < 2e-16 ***
+long         0.0370543  0.0086042   4.307 1.66e-05 ***
+alt          0.0013780  0.0003374   4.084 4.42e-05 ***
+precip       0.2211418  0.1183507   1.869   0.0617 .  
+m.fapar      0.0218767  0.0052545   4.163 3.13e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1183.81  on 864  degrees of freedom
+Residual deviance:  994.62  on 859  degrees of freedom
+AIC: 1006.6
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE TRUE
+     0    96   19
+     1    56   88
+  threshold       AUC omission.rate sensitivity specificity prop.correct     Kappa
+1       0.5 0.7229469     0.3888889   0.6111111   0.8347826    0.7104247 0.4319013
+[1] "Palmeiral"
+
+Call:
+glm(formula = Palmeiral ~ lat + precip + atm + wind, family = "binomial", 
+    data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.8256  -0.8813  -0.7053   1.3175   2.3082  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -91.306733  14.891355  -6.132 8.70e-10 ***
+lat           0.192806   0.031893   6.045 1.49e-09 ***
+precip        0.290457   0.089921   3.230 0.001237 ** 
+atm           2.316684   0.385509   6.009 1.86e-09 ***
+wind          0.011651   0.003433   3.394 0.000689 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 1034.74  on 864  degrees of freedom
+Residual deviance:  983.53  on 860  degrees of freedom
+AIC: 993.53
+
+Number of Fisher Scoring iterations: 4
+
+      predict
+Actual FALSE
+     0   184
+     1    75
+  threshold AUC omission.rate sensitivity specificity prop.correct Kappa
+1       0.5 0.5             1           0           1    0.7104247     0
+[1] "Manguezal"
+
+Call:
+glm(formula = Manguezal ~ lat + long + atm + wind + m.fapar, 
+    family = "binomial", data = df)
+
+Deviance Residuals: 
+    Min       1Q   Median       3Q      Max  
+-1.3041  -0.6134  -0.4705  -0.2248   3.1619  
+
+Coefficients:
+              Estimate Std. Error z value Pr(>|z|)    
+(Intercept) -95.561829  22.290099  -4.287 1.81e-05 ***
+lat           0.248710   0.053370   4.660 3.16e-06 ***
+long          0.016285   0.010360   1.572    0.116    
+atm           2.288618   0.575099   3.980 6.91e-05 ***
+wind          0.006189   0.003570   1.733    0.083 .  
+m.fapar       0.023516   0.005604   4.196 2.72e-05 ***
+---
+Signif. codes:  0 ‘***’ 0.001 ‘**’ 0.01 ‘*’ 0.05 ‘.’ 0.1 ‘ ’ 1
+
+(Dispersion parameter for binomial family taken to be 1)
+
+    Null deviance: 718.15  on 864  degrees of freedom
+Residual deviance: 646.90  on 859  degrees of freedom
+AIC: 658.9
+
+Number of Fisher Scoring iterations: 6
+
+      predict
+Actual FALSE
+     0   225
+     1    34
+  threshold AUC omission.rate sensitivity specificity prop.correct Kappa
+1       0.5 0.5             1           0           1    0.8687259     0
