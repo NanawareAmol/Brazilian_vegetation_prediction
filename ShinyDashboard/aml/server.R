@@ -56,6 +56,29 @@ server <- function(input, output) {
     df
   })
   
+  output$accuracyTables = DT::renderDataTable({
+    if(file.exists("biome_accuracy.rda")) {
+      load("biome_accuracy.rda")
+      if(input$selectedvariable == "Logistic"){
+        biome_accuracy %>%
+          rename(Biome_name = colnames.y_test.) %>% 
+          select(Biome_name, accuracy_logit, avg_accuracy_logit)
+      } else if (input$selectedvariable=="Multivariate Random Forest") {
+          biome_accuracy %>%
+            rename(Biome_name = colnames.y_test.) %>% 
+            select(Biome_name, accuracy_MRF, avg_accuracy_MRF)
+      }
+    }
+  })
+  
+  output$allAccuracyTable = DT::renderDataTable({
+    if(file.exists("biome_accuracy.rda")) {
+      load("biome_accuracy.rda")
+      biome_accuracy %>% 
+        rename(Biome_name = colnames.y_test.)
+    }
+  })
+  
   
   Cases <- reactive({
     if (input$selectedvariable=="Logistic") {
@@ -212,7 +235,6 @@ server <- function(input, output) {
       load("nnet_model.rda")
       plot(nnet_model, rep="best")
     } else if (input$selectedvariable=="Multivariate Random Forest") {
-      
     }
   })
   

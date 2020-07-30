@@ -49,8 +49,20 @@ body <- dashboardBody(
             fluidRow(
                 box(
                     width = 12,
-                    title = "Individual Biome Accuracy",
+                    title = "Individual Biome Accuracy Plot",
                     girafeOutput("accuracyBarPlot")
+                )
+            ),
+            fluidRow(
+                box(
+                    width = 12,
+                    title = "Individual Biome Accuracy Table",
+                    withSpinner(DT::dataTableOutput("allAccuracyTable"), type = 2),
+                    tags$head(tags$style("#allAccuracyTable{
+                                                overflow-y:scroll; 
+                                                width: auto;
+                                             }")
+                              )
                 )
             )
         ),
@@ -70,14 +82,24 @@ body <- dashboardBody(
                 fluidRow(
                     tabBox(
                         width = "500px",
-                        tabPanel(id = "plotPanel", title = "Graph", status = "primary", 
-                                 solidHeader = T, plotOutput("detailedPlot")),
                         tabPanel(id = "summaryPanel", title = "Summary", 
                                  withSpinner(verbatimTextOutput("Summary"), type = 2)
                         ),
+                        tabPanel(id = "plotPanel", title = "Graph/Table", status = "primary", 
+                                 withSpinner(DT::dataTableOutput("accuracyTables"), type = 2),
+                                 solidHeader = T, plotOutput("detailedPlot")
+                                 ),
                         tags$head(tags$style("#Summary{overflow-y:scroll;
                                                  max-height: 450px; width: auto;
-                                                 background: ghostwhite;}"))
+                                                 background: ghostwhite;}",
+                                             "#accuracyTables{
+                                                overflow-y:scroll;
+                                                max-height: 450px; 
+                                                width: auto;
+                                                position: relative;
+                                                float: left;
+                                             }")
+                                  )
                     )
                 )
             )
