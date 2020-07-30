@@ -2,7 +2,7 @@
 suppressMessages(library(tidyverse))
 suppressMessages(library(ggplot2))
 suppressMessages(library(SDMTools))
-suppressMessages(library(caret))
+# suppressMessages(library(caret))
 suppressMessages(library(effects))
 
 df <- read.csv("brazilian_forest_data.csv", stringsAsFactors = T)
@@ -16,21 +16,6 @@ X_test <- test[1:9]
 
 y_train <- train[10:length(train)]
 y_test <- test[10:length(test)]
-
-
-##################################################Correlation matrix
-
-# corMat <- cor(df, method="spearman")
-# corMat
-# 
-# hst <- sort(corMat)[(nrow(corMat)-1)*nrow(corMat)]
-# fst <- sort(corMat)[1]
-# hstCorr <- ifelse(abs(fst) > hst, fst, hst)
-# 
-# param <- which(corMat == hstCorr, arr.ind = TRUE)[1,]
-# par1 <- rownames(corMat)[param[1]]
-# par2 <- rownames(corMat)[param[2]]
-# paste(par1," and ",par2," have the highest correlation with value of ",hstCorr)
 
 
 ##################################################### Logistic Regression on each Biom
@@ -53,28 +38,20 @@ for (column in colnames(y_train)) {
   logitList[[i]] <- logit
   # plot(allEffects(logitList[[i]]))
   #testing the logit model on the test data
-  # pred <- predict(logit,X_test)
+  pred <- predict(logit,X_test)
   # print(table(Actual = y_test[,which(colnames(y_test)==column)], predict = pred > 0.5))
   # print(accuracy(y_test[,which(colnames(y_test)==column)], pred))
-  # biome_accuracy[i, 2] = accuracy(y_test[,which(colnames(y_test)==column)], pred)[,6]
+  biome_accuracy[i, "accuracy_logit"] = accuracy(y_test[,which(colnames(y_test)==column)], pred)[,6]
 }
 
-i = 0
-for (column in colnames(y_train)) {
-  i = i + 1
-  print(column)
-  plot(allEffects(logitList[[2]])[10])
-}
-
-
-# model
-# lat *long * (p1+p2...) + (p1+p2...)^2
-# (p1+p2....)^3
+# i = 0
+# for (column in colnames(y_train)) {
+#   i = i + 1
+#   print(column)
+#   plot(allEffects(logitList[[2]])[10])
+# }
 # sum(choose(9, 0:3))
 # sink()
-
-
-
 
 ############################################################ Neural net
 
@@ -111,17 +88,9 @@ df_model = neuralnet(df_train$Campo_Rupestre + df_train$Cerrado_lato_sensu +
 
 plot(df_model, rep="best")
 
-# gwplot(df_model, selected.covariate="alt")
-# gwplot(df_model, selected.covariate="m.fapar")
-# gwplot(df_model, selected.covariate="precip")
-# gwplot(df_model, selected.covariate="temp2m")
-# gwplot(df_model, selected.covariate="atm")
-# gwplot(df_model, selected.covariate="wind")
-
 model_results = neuralnet::compute(df_model,df_test)
 predicted_strength = model_results$net.result
 
-# cor(predicted_strength,df_test$strength)
 
 ################################ which bioms got predicted
 # predicted_df <- df[607:865,][1:9]
@@ -172,6 +141,50 @@ summary(Prediction)
 biome_accuracy$avg_accuracy_logit <- mean(biome_accuracy$accuracy_logit)
 biome_accuracy$avg_accuracy_nnet <- mean(biome_accuracy$accuracy_nnet)
 biome_accuracy$avg_accuracy_MRF <- mean(biome_accuracy$accuracy_MRF)
+
+
+
+
+library(ggplot2)
+library(ggiraph)
+
+nrow(y_test)
+
+donut_logistic <- data.frame(Accuracy = c("Wrong_Prediction", "Correct_Prediction"), 
+                             value = c(nrow(y_test) * (1-biome_accuracy$avg_accuracy_logit[1]), 
+                                       nrow(y_test) * biome_accuracy$avg_accuracy_logit[1])
+                             ) %>%
+  mutate(
+    percentage = value / sum(value),
+    hover_text = paste0(Accuracy, ": ", value)
+  ) %>%
+  mutate(percentage_label = paste0(round(100 * percentage, 1), "%"))
+
+donut_plot <- ggplot(donut_logistic, aes(y = value, fill = Accuracy)) +
+  geom_bar_interactive(
+    aes(x = 1, tooltip = hover_text),
+    width = 0.1,
+    stat = "identity",
+    show.legend = TRUE
+  ) +
+  annotate(
+    geom = "text",
+    x = 0,
+    y = 0,
+    label = donut_logistic[["percentage_label"]][donut_logistic[["Accuracy"]] == "Correct_Prediction"],
+    size = 20,
+    color = "light green"
+  ) +
+  scale_fill_manual(values = c(Wrong_Prediction = "gray", Correct_Prediction = "light green")) +
+  coord_polar(theta = "y") +
+  theme_void()
+
+ggiraph(ggobj = donut_plot)
+
+
+
+
+
 
 
 

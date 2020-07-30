@@ -1,56 +1,19 @@
 library(shiny)
 library(shinydashboard)
+suppressMessages(library(shinycssloaders))
+library(DT)
+library(ggiraph)
 
 header <- dashboardHeader(
-    title = "Brazilian Forest",
-    dropdownMenuOutput("msgOutput"),
-    dropdownMenu(
-        type = "notifications",
-        notificationItem(
-            text = "The International Space Station is overhead!",
-            href = "",
-            icon = icon("dashboard"),
-            status = "success"
-        )
-    ),
-    dropdownMenu(
-        type = "tasks",
-        taskItem(
-            text = "The International Space Station is overhead!",
-            value = 15, #------ (this is % of task completion)
-            color = "red"
-        ),
-        taskItem(
-            text = "task 2",
-            value = 55,
-            color = "yellow"
-        ),
-        taskItem(
-            text = "task 3",
-            value = 80,
-            color = "aqua"
-        )
-    )
-    # dropdownMenu(
-    #     type = "messages",
-    #     messageItem(
-    #         from = "Lucy",
-    #         message = "You can view the International Space Station!",
-    #         href = "https://spotthestation.nasa.gov/sightings/"
-    #     )
-    # )
+    title = "Brazilian Forest"
 )
 
 sidebar <- dashboardSidebar(
-    sidebarMenu(    # sidebarMenu is just a container for css styling 
-        sidebarSearchForm("searchID", "searchB", "Search"),
-        # Create two `menuItem()`s, "Dashboard" and "Inputs"
+    sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Detailed Analysis", tabName = "detailedAnalysis", icon = icon("bar-chart")),
         menuItem("Raw Data", tabName = "rawData", icon = icon("table"), 
-                 badgeLabel = "New", badgeColor = "green"),
-        sliderInput("bins", "Number of Breaks", 1, 100, 50),    # here bins is a ID
-        textInput("input_id", "Search Opportunities", "12345")
+                 badgeLabel = "New", badgeColor = "green")
     )
 )
 
@@ -63,6 +26,36 @@ body <- dashboardBody(
     tabItems(
         tabItem(
             tabName = "dashboard",
+            fluidRow(
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "LR Accuracy",
+                    girafeOutput("logisticAccuracyPlot")
+                ),
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "Neural Net Accuracy",
+                    girafeOutput("nnetAccuracyPlot")
+                ),
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "MRF Accuracy",
+                    girafeOutput("mrfAccuracyPlot")
+                )
+            ),
+            fluidRow(
+                box(
+                    width = 12,
+                    title = "Individual Biome Accuracy",
+                    girafeOutput("accuracyBarPlot")
+                )
+            )
+        ),
+        tabItem(
+            tabName = "detailedAnalysis",
             fluidRow(
                 column(
                     4,
@@ -78,7 +71,7 @@ body <- dashboardBody(
                     tabBox(
                         width = "500px",
                         tabPanel(id = "plotPanel", title = "Graph", status = "primary", 
-                                     solidHeader = T, plotOutput("detailedPlot")),
+                                 solidHeader = T, plotOutput("detailedPlot")),
                         tabPanel(id = "summaryPanel", title = "Summary", 
                                  withSpinner(verbatimTextOutput("Summary"), type = 2)
                         ),
@@ -87,6 +80,21 @@ body <- dashboardBody(
                                                  background: ghostwhite;}"))
                     )
                 )
+            )
+        ),
+        tabItem(
+            tabName = "rawData",
+            mainPanel(
+                fluidRow(
+                    tabBox(
+                        width = "500px",
+                        tabPanel(id = "rawDataTable", title = "Dataset", 
+                                withSpinner(DT::dataTableOutput("dataTable"), type = 2)
+                        ),
+                        tags$head(tags$style("#dataTable{overflow-y:scroll;
+                                                 max-height: 500px; width: auto;
+                                                 background: ghostwhite;}"))
+                ))
             )
         )
     )
