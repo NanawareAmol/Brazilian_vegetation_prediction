@@ -1,122 +1,128 @@
 library(shiny)
 library(shinydashboard)
+suppressMessages(library(shinycssloaders))
+library(DT)
+library(ggiraph)
 
 header <- dashboardHeader(
-    title = "Brazilian Forest",
-    dropdownMenuOutput("msgOutput"),
-    dropdownMenu(
-        type = "notifications",
-        notificationItem(
-            text = "The International Space Station is overhead!",
-            href = "",
-            icon = icon("dashboard"),
-            status = "success"
-        )
-    ),
-    dropdownMenu(
-        type = "tasks",
-        taskItem(
-            text = "The International Space Station is overhead!",
-            value = 15, #------ (this is % of task completion)
-            color = "red"
-        ),
-        taskItem(
-            text = "task 2",
-            value = 55,
-            color = "yellow"
-        ),
-        taskItem(
-            text = "task 3",
-            value = 80,
-            color = "aqua"
-        )
-    )
-    # dropdownMenu(
-    #     type = "messages",
-    #     messageItem(
-    #         from = "Lucy",
-    #         message = "You can view the International Space Station!",
-    #         href = "https://spotthestation.nasa.gov/sightings/"
-    #     )
-    # )
+    title = "Brazilian Forest"
 )
 
 sidebar <- dashboardSidebar(
-    sidebarMenu(    # sidebarMenu is just a container for css styling 
-        sidebarSearchForm("searchID", "searchB", "Search"),
-        # Create two `menuItem()`s, "Dashboard" and "Inputs"
+    sidebarMenu(
         menuItem("Dashboard", tabName = "dashboard", icon = icon("dashboard")),
         menuItem("Detailed Analysis", tabName = "detailedAnalysis", icon = icon("bar-chart")),
         menuItem("Raw Data", tabName = "rawData", icon = icon("table"), 
-                 badgeLabel = "New", badgeColor = "green"),
-        sliderInput("bins", "Number of Breaks", 1, 100, 50),    # here bins is a ID
-        textInput("input_id", "Search Opportunities", "12345")
+                 badgeLabel = "New", badgeColor = "green")
     )
 )
+
+options(spinner.color="#0275D8", 
+        spinner.color.background="#ffffff", 
+        spinner.size=1
+        )
+
 body <- dashboardBody(
     tabItems(
         tabItem(
             tabName = "dashboard",
             fluidRow(
-                tabBox(
-                    tabPanel(title = "Logistic Regrssion", status = "primary", 
-                            solidHeader = T, plotOutput("logitPlot")),
-                            #histogram is ID in output variable which we will be using in 
-                            #server code
-                    tabPanel(title = "Summary")
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "LR Accuracy",
+                    girafeOutput("logisticAccuracyPlot")
+                ),
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "Neural Net Accuracy",
+                    girafeOutput("nnetAccuracyPlot")
+                ),
+                box(
+                    width = 4,
+                    height = "200px",
+                    title = "MRF Accuracy",
+                    girafeOutput("mrfAccuracyPlot")
                 )
-                # box(title = "box 2", status = "warning",
-                # "you can add body text directly like this for this box", br()
-                # "2nd text"
-                #     solidHeader = T, sliderInput("bins", "Number of Breaks", 1, 100, 50),    # here bins is a ID
-                # textInput("input_id", "Search Opportunities", "12345"))
+            ),
+            fluidRow(
+                box(
+                    width = 12,
+                    title = "Individual Biome Accuracy Plot",
+                    girafeOutput("accuracyBarPlot")
+                )
+            ),
+            fluidRow(
+                box(
+                    width = 12,
+                    title = "Individual Biome Accuracy Table",
+                    withSpinner(DT::dataTableOutput("allAccuracyTable"), type = 2),
+                    tags$head(tags$style("#allAccuracyTable{
+                                                overflow-y:scroll; 
+                                                width: auto;
+                                             }")
+                              )
+                )
             )
         ),
         tabItem(
             tabName = "detailedAnalysis",
             fluidRow(
-                box(title = "Histogram of faithful", status = "primary", 
-                    solidHeader = T, plotOutput("histogram"))
-                #histogram is ID in output variable which we will be using in server code
-                
-                # box(title = "box 2", status = "warning",
-                    # "you can add body text directly like this for this box", br()
-                    # "2nd text"
-                #     solidHeader = T, sliderInput("bins", "Number of Breaks", 1, 100, 50),    # here bins is a ID
-                    # textInput("input_id", "Search Opportunities", "12345"))
+                column(
+                    4,
+                    selectInput(
+                        "selectedvariable",
+                        label = "Select Model:",
+                        choices = c("Logistic", "Neural Net", "Multivariate Random Forest")
+                    )
+                ),width=2
+            ),
+            mainPanel(
+                fluidRow(
+                    tabBox(
+                        width = "500px",
+                        tabPanel(id = "summaryPanel", title = "Summary", 
+                                 withSpinner(verbatimTextOutput("Summary"), type = 2)
+                        ),
+                        tabPanel(id = "plotPanel", title = "Graph/Table", status = "primary", 
+                                 withSpinner(DT::dataTableOutput("accuracyTables"), type = 2),
+                                 solidHeader = T, plotOutput("detailedPlot")
+                                 ),
+                        tags$head(tags$style("#Summary{overflow-y:scroll;
+                                                 max-height: 450px; width: auto;
+                                                 background: ghostwhite;}",
+                                             "#accuracyTables{
+                                                overflow-y:scroll;
+                                                max-height: 450px; 
+                                                width: auto;
+                                                position: relative;
+                                                float: left;
+                                             }")
+                                  )
+                    )
+                )
             )
         ),
         tabItem(
             tabName = "rawData",
-            h2("rawData")
+            mainPanel(
+                fluidRow(
+                    tabBox(
+                        width = "500px",
+                        tabPanel(id = "rawDataTable", title = "Dataset", 
+                                withSpinner(DT::dataTableOutput("dataTable"), type = 2)
+                        ),
+                        tags$head(tags$style("#dataTable{overflow-y:scroll;
+                                                 max-height: 500px; width: auto;
+                                                 background: ghostwhite;}"))
+                ))
+            )
         )
     )
+)
     
-    # Create a tabBox
-    # tabItems(
-    #     tabItem(
-    #         tabName = "dashboard",
-    #         tabBox(
-    #             title = "International Space Station Fun Facts",
-    #             tabPanel("Fun Fact 1"),
-    #             tabPanel("Fun Fact 2")
-    #         )
-    #     ),
-    #     tabItem(tabName = "inputs")
-    # )
-)
 
 
-shinyUI(
-    dashboardPage(header, sidebar, body)
-)
 
-
-# ui <- dashboardPage(header = header,
-#                     sidebar = sidebar,
-#                     body = body
-# )
-# 
-# server <- function(input, output) {}
-# 
-# shinyApp(ui, server)
+ui <- dashboardPage(header, sidebar, body)

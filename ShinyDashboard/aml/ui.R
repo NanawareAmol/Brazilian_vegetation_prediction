@@ -1,12 +1,14 @@
-library(shiny)
-library(shinydashboard)
+suppressMessages(library(shiny))
+suppressMessages(library(shinydashboard))
 suppressMessages(library(shinycssloaders))
-library(DT)
-library(ggiraph)
+suppressMessages(library(DT))
+suppressMessages(library(ggiraph))
 
 header <- dashboardHeader(
     title = "Brazilian Forest"
 )
+
+lenGraphs = 10
 
 sidebar <- dashboardSidebar(
     sidebarMenu(
@@ -82,22 +84,52 @@ body <- dashboardBody(
                 fluidRow(
                     tabBox(
                         width = "500px",
+                        id = "detailedPanelBox",
                         tabPanel(id = "summaryPanel", title = "Summary", 
                                  withSpinner(verbatimTextOutput("Summary"), type = 2)
                         ),
-                        tabPanel(id = "plotPanel", title = "Graph/Table", status = "primary", 
+                        tabPanel(id = "plotPanel", title = "Graph/Table", 
                                  withSpinner(DT::dataTableOutput("accuracyTables"), type = 2),
                                  solidHeader = T, plotOutput("detailedPlot")
                                  ),
+                        tabPanel(
+                            id = "logitEffectsPlots", 
+                            title = "Effects Plot",
+                            column(width = 6,
+                                   selectInput(
+                                       "logitEffects",
+                                       label = "Select Biome:",
+                                       choices = colnames(y_train)
+                                   )
+                            ),
+                            column(width = 6, 
+                                   selectInput(
+                                       "logitEffectsOptions",
+                                       label = "Select Plot:",
+                                       choices = 1:10
+                                   )
+                            ),
+                            withSpinner(plotOutput("effectsPlot"), type = 2)
+                        ),
                         tags$head(tags$style("#Summary{overflow-y:scroll;
-                                                 max-height: 450px; width: auto;
-                                                 background: ghostwhite;}",
-                                             "#accuracyTables{
+                                                 max-height: 460px; width: auto;
+                                                 background: ghostwhite;}
+                                            #accuracyTables{
                                                 overflow-y:scroll;
-                                                max-height: 450px; 
+                                                max-height: 460px; 
                                                 width: auto;
                                                 position: relative;
                                                 float: left;
+                                             }
+                                             div[data-value='Graph/Table']{
+                                                overflow: hidden !important;
+                                             }
+                                             .content-wrapper{
+                                                overflow-y: auto;
+                                             }
+                                             #effectsPlot{
+                                                overflow-y: scroll;
+                                                width: auto;
                                              }")
                                   )
                     )

@@ -44,12 +44,15 @@ for (column in colnames(y_train)) {
   biome_accuracy[i, "accuracy_logit"] = accuracy(y_test[,which(colnames(y_test)==column)], pred)[,6]
 }
 
-# i = 0
-# for (column in colnames(y_train)) {
-#   i = i + 1
-#   print(column)
-#   plot(allEffects(logitList[[2]])[10])
-# }
+i = 0
+for (column in colnames(y_train)) {
+  i = i + 1
+  print(column)
+  plot(allEffects(logitList[[match("Campo_Rupestre",colnames(y_train))]]))
+  length(allEffects(logitList[[match("Campo_Rupestre",colnames(y_train))]]))
+}
+names(allEffects(logitList[[match("Campo_Rupestre",colnames(y_train))]])[2])
+
 # sum(choose(9, 0:3))
 # sink()
 
