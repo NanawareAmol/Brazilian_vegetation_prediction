@@ -4,7 +4,6 @@
 suppressMessages(library(shiny))
 suppressMessages(library(shinydashboard))
 suppressMessages(library(tidyverse))
-# suppressMessages(library(SDMTools))
 suppressMessages(library(caret))
 suppressMessages(library(neuralnet))
 suppressMessages(library(shinycssloaders))
@@ -12,6 +11,8 @@ suppressMessages(library(MultivariateRandomForest))
 suppressMessages(library(DT))
 suppressMessages(library(ggiraph))
 suppressMessages(library(effects))
+suppressMessages(library(shinyjs))
+suppressMessages(library(isoband))
 
 server <- function(input, output, session) {
   
@@ -58,7 +59,7 @@ server <- function(input, output, session) {
     biome_accuracy$accuracy_MRF <- 0
   }
   
-  initLogit <- function(){
+  initLogit <- reactive({
     
     if(file.exists("logitList.rda")) {
       ## load logistic regression model
@@ -96,28 +97,115 @@ server <- function(input, output, session) {
       
       biome_accuracy$avg_accuracy_logit <- mean(biome_accuracy$accuracy_logit)
       save(biome_accuracy, file = "biome_accuracy.rda")
-      
-      print("from logit")
-      print(biome_accuracy)
     }
-  }
+  })
   
-  initNnet <- function(){
-    
-  }
+  initNnet <- reactive({
+    if(file.exists("nnet_model.rda")) {
+      ## load neural network model
+      load("nnet_model.rda")
+      
+    } else {
+      ## (re)fit the model
+      if(file.exists("biome_accuracy.rda")) {
+        load("biome_accuracy.rda")
+      }
+      
+      set.seed(1000000)
+      
+      nnet_model <- neuralnet(Campo_Rupestre + Cerrado_lato_sensu +
+                                + Floresta_de_Terra_Firme +
+                                Floresta_Estacional_Semidecidual +
+                                Floresta_Ombrofila_Densa + Restinga +
+                                Savana_Estepica + Floresta_de_Igapo +
+                                Floresta_de_Varzea + Campo_de_Altitude +
+                                Campo_de_Varzea +
+                                Vegetacao_Sobre_Afloramentos_Rochosos +
+                                Savana_Amazonica +
+                                Campinarana +
+                                Campo_Limpo +
+                                Floresta_Estacional_Decidual +
+                                Floresta_Estacional_Perenifolia +
+                                Floresta_Ombrofila_Mista + Palmeiral +
+                                Manguezal ~ ., data = df_train,
+                              linear.output=FALSE, hidden = 4, stepmax=1e+6)
+      
+      model_results <- compute(nnet_model,df_test)
+      predicted_strength <- model_results$net.result
+      
+      predStr <- predicted_strength
+      predStr[predStr > 0.5] = 1
+      predStr[predStr < 0.5] = 0
+      
+      print(summary(nnet_model))
+      save(nnet_model, file = "nnet_model.rda")
+      
+      biome_accuracy$accuracy_nnet <- 0
+      
+      for(i in 1:20) {
+        results <- data.frame(actual = df_test[, 9+i], prediction = predStr[,i])
+        roundedresults<-sapply(results,round,digits=0)
+        roundedresultsdf <- data.frame(roundedresults)
+        
+        xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+        biome_accuracy[i, "accuracy_nnet"] = confusionMatrix(xtab)[[3]][[1]]
+      }
+      
+      biome_accuracy$avg_accuracy_nnet <- mean(biome_accuracy$accuracy_nnet)
+      save(biome_accuracy, file = "biome_accuracy.rda")
+    }
+  })
   
-  
-  
-  
+  initMRF <- reactive({
+    if(file.exists("mrfPred.rda")) {
+      ## load MRF model
+      load("mrfPred.rda")
+      
+    } else {
+      if(file.exists("biome_accuracy.rda")) {
+        load("biome_accuracy.rda")
+      }
+      n_tree = 2
+      m_feature = 5
+      min_leaf = 40
+      mrfPred <- build_forest_predict(as.matrix(X_train), as.matrix(y_train), n_tree, 
+                                      m_feature, min_leaf, as.matrix(X_test))
+      
+      mrfPred_y <- mrfPred
+      mrfPred_y[mrfPred_y > 0.5] = 1
+      mrfPred_y[mrfPred_y < 0.5] = 0
+      
+      biome_accuracy$accuracy_MRF <- 0
+      
+      for(i in 1:20) {
+        results <- data.frame(actual = y_test[,i], prediction = mrfPred_y[,i])
+        roundedresults<-sapply(results,round,digits=0)
+        roundedresultsdf=data.frame(roundedresults)
+        
+        xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+        biome_accuracy[i, "accuracy_MRF"] = confusionMatrix(xtab)[[3]][[1]]
+      }
+      
+      biome_accuracy$avg_accuracy_MRF <- mean(biome_accuracy$accuracy_MRF)
+      save(mrfPred, file = "mrfPred.rda")
+      save(biome_accuracy, file = "biome_accuracy.rda")
+      
+      print(summary(mrfPred))
+    }
+  })
+
+  init <- reactive({
+    initLogit()
+    initNnet()
+    initMRF()
+  })
   
   # Raw page, data file display
-  
   output$dataTable = DT::renderDataTable({
     df
   })
   
   # display biome accuracy data tables
-  
   output$accuracyTables = DT::renderDataTable({
     if(file.exists("biome_accuracy.rda")) {
       load("biome_accuracy.rda")
@@ -156,44 +244,9 @@ server <- function(input, output, session) {
           
         }
       } else {
-        ## (re)fit the model
-        if(file.exists("biome_accuracy.rda")) {
-          load("biome_accuracy.rda")
-        }
-        biome_accuracy$accuracy_logit <- 0
-        i = 0
-        logitList <- vector(mode="list", length=20)
-        for (column in colnames(y_train)) {
-          i = i + 1
-          print(column)
-          fm <- as.formula(paste(column, "~ (lat +	long +	alt +	temp2m + humidity + 
-                         precip +	atm +	wind + m.fapar)^2"))
-          fit <- glm(fm,family = "binomial",data = df)
-          
-          logit <- step(fit, direction = "backward",trace = 0)
-          print(summary(logit))
-          
-          logitList[[i]] <- logit
-          
-          #testing the logit model on the test data
-          pred <- predict(logit,X_test)
-          pred[pred > 0.5] = 1
-          pred[pred < 0.5] = 0
-          
-          xtab <- table(factor(pred, levels = c(0,1)), y_test[,which(colnames(y_test)==column)])
-          print(confusionMatrix(xtab))
-          biome_accuracy[i, "accuracy_logit"] = confusionMatrix(xtab)[[3]][[1]]
+        initLogit()
       }
-        save(logitList, file = "logitList.rda")
-        
-        biome_accuracy$avg_accuracy_logit <- mean(biome_accuracy$accuracy_logit)
-        save(biome_accuracy, file = "biome_accuracy.rda")
-        
-        print("from logit")
-        print(biome_accuracy)
-      }
-      
-    }else if (input$selectedvariable=="Neural Net") {
+    } else if (input$selectedvariable=="Neural Net") {
       
       if(file.exists("nnet_model.rda")) {
         ## load model
@@ -201,53 +254,7 @@ server <- function(input, output, session) {
         print(summary(nnet_model))
         
       } else {
-        ## (re)fit the model
-        if(file.exists("biome_accuracy.rda")) {
-          load("biome_accuracy.rda")
-        }
-          
-        set.seed(1000000)
-  
-        nnet_model <- neuralnet(Campo_Rupestre + Cerrado_lato_sensu +
-                                  + Floresta_de_Terra_Firme +
-                                  Floresta_Estacional_Semidecidual +
-                                  Floresta_Ombrofila_Densa + Restinga +
-                                  Savana_Estepica + Floresta_de_Igapo +
-                                  Floresta_de_Varzea + Campo_de_Altitude +
-                                  Campo_de_Varzea +
-                                  Vegetacao_Sobre_Afloramentos_Rochosos +
-                                  Savana_Amazonica +
-                                  Campinarana +
-                                  Campo_Limpo +
-                                  Floresta_Estacional_Decidual +
-                                  Floresta_Estacional_Perenifolia +
-                                  Floresta_Ombrofila_Mista + Palmeiral +
-                                  Manguezal ~ ., data = df_train,
-                                linear.output=FALSE, hidden = 4, stepmax=1e+6)
-        
-        model_results <- compute(nnet_model,df_test)
-        predicted_strength <- model_results$net.result
-  
-        predStr <- predicted_strength
-        predStr[predStr > 0.5] = 1
-        predStr[predStr < 0.5] = 0
-  
-        print(summary(nnet_model))
-        save(nnet_model, file = "nnet_model.rda")
-        
-        biome_accuracy$accuracy_nnet <- 0
-
-        for(i in 1:20) {
-          results <- data.frame(actual = df_test[, 9+i], prediction = predStr[,i])
-          roundedresults<-sapply(results,round,digits=0)
-          roundedresultsdf <- data.frame(roundedresults)
-          
-          xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
-          biome_accuracy[i, "accuracy_nnet"] = confusionMatrix(xtab)[[3]][[1]]
-        }
-
-        biome_accuracy$avg_accuracy_nnet <- mean(biome_accuracy$accuracy_nnet)
-        save(biome_accuracy, file = "biome_accuracy.rda")
+        initNnet()
       }
       
     } else if (input$selectedvariable=="Multivariate Random Forest") {
@@ -258,42 +265,13 @@ server <- function(input, output, session) {
           print(summary(mrfPred))
           
         } else {
-          if(file.exists("biome_accuracy.rda")) {
-            load("biome_accuracy.rda")
-          }
-          n_tree = 2
-          m_feature = 5
-          min_leaf = 40
-          mrfPred <- build_forest_predict(as.matrix(X_train), as.matrix(y_train), n_tree, 
-                                             m_feature, min_leaf, as.matrix(X_test))
-          
-          mrfPred_y <- mrfPred
-          mrfPred_y[mrfPred_y > 0.5] = 1
-          mrfPred_y[mrfPred_y < 0.5] = 0
-          
-          biome_accuracy$accuracy_MRF <- 0
-          
-          for(i in 1:20) {
-            results <- data.frame(actual = y_test[,i], prediction = mrfPred_y[,i])
-            roundedresults<-sapply(results,round,digits=0)
-            roundedresultsdf=data.frame(roundedresults)
-            
-            xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
-            biome_accuracy[i, "accuracy_MRF"] = confusionMatrix(xtab)[[3]][[1]]
-          }
-          
-          biome_accuracy$avg_accuracy_MRF <- mean(biome_accuracy$accuracy_MRF)
-          save(mrfPred, file = "mrfPred.rda")
-          save(biome_accuracy, file = "biome_accuracy.rda")
-          
-          print(summary(mrfPred))
+          initMRF()
         }
       }
       
   })
   
   # plot rendering code and display
-  
   output$detailedPlot <- renderPlot({
     if (input$selectedvariable=="Neural Net") {
       load("nnet_model.rda")
@@ -302,6 +280,13 @@ server <- function(input, output, session) {
   })
   
   observe({
+    if(!file.exists("biome_accuracy.rda")) {
+      init()
+      session$reload()
+    }
+    load("biome_accuracy.rda")
+    load("logitList.rda")
+    
     lenGraphs <- length(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]]))
     logitEffectsPlotList <<- vector(mode = "list", length = lenGraphs)
     for (l in 1:lenGraphs) {
@@ -363,6 +348,12 @@ server <- function(input, output, session) {
   }
   
   output$logisticAccuracyPlot <- renderGirafe({
+    if(!file.exists("biome_accuracy.rda")){
+      init()
+      load("biome_accuracy.rda")
+      session$reload()
+    }
+    
     val1 <- (nrow(y_test) * (1-biome_accuracy$avg_accuracy_logit[1]))
     val2 <- (nrow(y_test) * biome_accuracy$avg_accuracy_logit[1])
     
