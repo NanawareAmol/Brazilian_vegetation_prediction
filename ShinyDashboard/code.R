@@ -2,7 +2,6 @@
 suppressMessages(library(tidyverse))
 suppressMessages(library(ggplot2))
 suppressMessages(library(SDMTools))
-# suppressMessages(library(caret))
 suppressMessages(library(effects))
 
 df <- read.csv("brazilian_forest_data.csv", stringsAsFactors = T)

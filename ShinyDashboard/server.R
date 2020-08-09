@@ -1,24 +1,23 @@
-library(shiny)
-library(shinydashboard)
 
+# Required libraries
+
+suppressMessages(library(shiny))
+suppressMessages(library(shinydashboard))
 suppressMessages(library(tidyverse))
-suppressMessages(library(ggplot2))
 suppressMessages(library(SDMTools))
-# suppressMessages(library(caret))
 suppressMessages(library(neuralnet))
 suppressMessages(library(shinycssloaders))
 suppressMessages(library(MultivariateRandomForest))
-library(DT)
-library(ggiraph)
+suppressMessages(library(DT))
+suppressMessages(library(ggiraph))
+suppressMessages(library(effects))
 
-server <- function(input, output) {
- print("entered server")
-  # vals<-reactiveValues()
-  # 
-  # vals <- eventReactive(input$)
+
+server <- function(input, output, session) {
   
   df <- read.csv("brazilian_forest_data.csv", stringsAsFactors = T)
-  set.seed(100) 
+  
+  set.seed(100)
   s <- sample(nrow(df), round(.7*nrow(df)))
   train <- df[s,]
   test <- df[-s,]
@@ -29,6 +28,8 @@ server <- function(input, output) {
   y_train <- train[10:length(train)]
   y_test <- test[10:length(test)]
   
+  # Normalise the data for Neural net
+  
   normalize <- function(x){
     return((x-min(x))/(max(x)-min(x)))
   }
@@ -37,6 +38,8 @@ server <- function(input, output) {
   df_train <- df_norm[1:606,]
   df_test <- df_norm[607:865,]
   
+  # checks for biome_accuracy file and other model files
+  
   if(!file.exists("biome_accuracy.rda")) {
     biome_accuracy <- data.frame(colnames(y_test))
   }else{
@@ -44,7 +47,10 @@ server <- function(input, output) {
   }
   if(!file.exists("logitList.rda")) {
     biome_accuracy$accuracy_logit <- 0
+  } else {
+    load("logitList.rda")
   }
+  
   if(!file.exists("model_results.rda")) {
     biome_accuracy$accuracy_nnet <- 0
   }
@@ -52,9 +58,13 @@ server <- function(input, output) {
     biome_accuracy$accuracy_MRF <- 0
   }
   
+  # Raw page, data file display
+  
   output$dataTable = DT::renderDataTable({
     df
   })
+  
+  # display biome accuracy data tables
   
   output$accuracyTables = DT::renderDataTable({
     if(file.exists("biome_accuracy.rda")) {
@@ -79,6 +89,7 @@ server <- function(input, output) {
     }
   })
   
+  # Model building and display summary
   
   Cases <- reactive({
     if (input$selectedvariable=="Logistic") {
@@ -157,7 +168,7 @@ server <- function(input, output) {
                                   Floresta_Estacional_Perenifolia +
                                   Floresta_Ombrofila_Mista + Palmeiral +
                                   Manguezal ~ ., data = df_train,
-                                linear.output=FALSE, hidden = 4, stepmax=1e+6) #hidden = c(5,3)
+                                linear.output=FALSE, hidden = 4, stepmax=1e+6)
         
         model_results <- compute(nnet_model,df_test)
         predicted_strength <- model_results$net.result
@@ -180,9 +191,6 @@ server <- function(input, output) {
 
         biome_accuracy$avg_accuracy_nnet <- mean(biome_accuracy$accuracy_nnet)
         save(biome_accuracy, file = "biome_accuracy.rda")
-        
-        print("from nnet")
-        print(biome_accuracy)
       }
       
     } else if (input$selectedvariable=="Multivariate Random Forest") {
@@ -219,25 +227,44 @@ server <- function(input, output) {
           save(mrfPred, file = "mrfPred.rda")
           save(biome_accuracy, file = "biome_accuracy.rda")
           
-          print("from logit")
-          print(biome_accuracy)
           print(summary(mrfPred))
         }
       }
       
   })
   
+  # plot rendering code and display
+  
   output$detailedPlot <- renderPlot({
-    # input$newplot
-    if(input$selectedvariable == "Logistic"){
-      
-    } else if (input$selectedvariable=="Neural Net") {
+    if (input$selectedvariable=="Neural Net") {
       load("nnet_model.rda")
       plot(nnet_model, rep="best")
-    } else if (input$selectedvariable=="Multivariate Random Forest") {
     }
   })
   
+  observe({
+    lenGraphs <- length(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]]))
+    logitEffectsPlotList <<- vector(mode = "list", length = lenGraphs)
+    for (l in 1:lenGraphs) {
+      logitEffectsPlotList[[l]] <<- names(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]])[l])
+    }
+    updateSelectInput(session = session ,inputId = "logitEffectsOptions", 
+                      choices = logitEffectsPlotList
+    )
+  })
+  
+  output$effectsPlot <- renderPlot({
+    listIndex <- match(input$logitEffectsOptions, logitEffectsPlotList)
+    effectsNum <- as.numeric(listIndex)
+    
+    if (is.na(listIndex))
+      delay(50, plot(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]])[listIndex]))
+    else
+      plot(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]])[listIndex])
+  })
+  
+  
+  # doughnut plots for dashboard
   girafePlot <- function(val1, val2){
     if(file.exists("biome_accuracy.rda")) {
       load("biome_accuracy.rda")
@@ -305,13 +332,10 @@ server <- function(input, output) {
       rename(
         Biome_name = colnames.y_test.
       )
-    print(allAcc)
     
     p <- ggplot(allAcc, aes( x = Biome_name, y = Accuracy, fill = Algorithm,
                           data_id = Biome_name ) ) +
       geom_bar_interactive(
-        # aes(x = 1, tooltip = Accuracy),
-        # width = 0.1,
         position=position_dodge(),
         stat = "identity") + 
       geom_text(aes(label = round(100*Accuracy, digits = 1)), vjust=1.6, color="white",
@@ -325,9 +349,9 @@ server <- function(input, output) {
                     accuracy_MRF = "MRF Accuracy")
       )
     x <- girafe(ggobj = p, width_svg = 10)
-    # if( interactive() ) print(x)
   })
   
+  # function call for summary from UI request
   output$Summary<-renderPrint({
     Cases()
   })
