@@ -1,7 +1,8 @@
 
 suppressMessages(library(tidyverse))
 suppressMessages(library(ggplot2))
-suppressMessages(library(SDMTools))
+# suppressMessages(library(SDMTools))
+suppressMessages(library(caret))
 suppressMessages(library(effects))
 
 df <- read.csv("brazilian_forest_data.csv", stringsAsFactors = T)
@@ -38,11 +39,15 @@ for (column in colnames(y_train)) {
   # plot(allEffects(logitList[[i]]))
   #testing the logit model on the test data
   pred <- predict(logit,X_test)
+  pred[pred > 0.5] = 1
+  pred[pred < 0.5] = 0
   # print(table(Actual = y_test[,which(colnames(y_test)==column)], predict = pred > 0.5))
   # print(accuracy(y_test[,which(colnames(y_test)==column)], pred))
-  biome_accuracy[i, "accuracy_logit"] = accuracy(y_test[,which(colnames(y_test)==column)], pred)[,6]
+  xtab <- table(factor(pred, levels = c(0,1)), y_test[,which(colnames(y_test)==column)])
+  print(confusionMatrix(xtab))
+  biome_accuracy[i, "accuracy_logit"] = confusionMatrix(xtab)[[3]][[1]]
 }
-
+view(pred)
 i = 0
 for (column in colnames(y_train)) {
   i = i + 1
@@ -110,7 +115,9 @@ for(i in 1:20) {
     results <- data.frame(actual = df_test[, 9+i], prediction = predStr[,i])
     roundedresults<-sapply(results,round,digits=0)
     roundedresultsdf=data.frame(roundedresults)
-    biome_accuracy[i, 3] = accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
+    xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+    biome_accuracy[i, "accuracy_nnet"] = confusionMatrix(xtab)[[3]][[1]]
+    # biome_accuracy[i, 3] = accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
 }
 
 
@@ -135,7 +142,9 @@ for(i in 1:20) {
   results <- data.frame(actual = y_test[,i], prediction = mrfPred_y[,i])
   roundedresults<-sapply(results,round,digits=0)
   roundedresultsdf=data.frame(roundedresults)
-  biome_accuracy[i, 4] = accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
+  xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+  biome_accuracy[i, "accuracy_MRF"] = confusionMatrix(xtab)[[3]][[1]]
+  # biome_accuracy[i, 4] = accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
 }
 
 summary(Prediction)

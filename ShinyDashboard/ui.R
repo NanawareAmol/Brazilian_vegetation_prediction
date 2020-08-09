@@ -31,26 +31,26 @@ body <- dashboardBody(
                     width = 4,
                     height = "200px",
                     title = "LR Accuracy",
-                    girafeOutput("logisticAccuracyPlot")
+                    withSpinner(girafeOutput("logisticAccuracyPlot"), type = 2)
                 ),
                 box(
                     width = 4,
                     height = "200px",
                     title = "Neural Net Accuracy",
-                    girafeOutput("nnetAccuracyPlot")
+                    withSpinner(girafeOutput("nnetAccuracyPlot"), type = 2)
                 ),
                 box(
                     width = 4,
                     height = "200px",
                     title = "MRF Accuracy",
-                    girafeOutput("mrfAccuracyPlot")
+                    withSpinner(girafeOutput("mrfAccuracyPlot"), type = 2)
                 )
             ),
             fluidRow(
                 box(
                     width = 12,
                     title = "Individual Biome Accuracy Plot",
-                    girafeOutput("accuracyBarPlot")
+                    withSpinner(girafeOutput("accuracyBarPlot"), type = 2)
                 )
             ),
             fluidRow(

@@ -4,14 +4,14 @@
 suppressMessages(library(shiny))
 suppressMessages(library(shinydashboard))
 suppressMessages(library(tidyverse))
-suppressMessages(library(SDMTools))
+# suppressMessages(library(SDMTools))
+suppressMessages(library(caret))
 suppressMessages(library(neuralnet))
 suppressMessages(library(shinycssloaders))
 suppressMessages(library(MultivariateRandomForest))
 suppressMessages(library(DT))
 suppressMessages(library(ggiraph))
 suppressMessages(library(effects))
-
 
 server <- function(input, output, session) {
   
@@ -57,6 +57,58 @@ server <- function(input, output, session) {
   if(!file.exists("mrfPred.rda")) {
     biome_accuracy$accuracy_MRF <- 0
   }
+  
+  initLogit <- function(){
+    
+    if(file.exists("logitList.rda")) {
+      ## load logistic regression model
+      load("logitList.rda")
+    } else {
+      ## (re)fit the model
+      if(file.exists("biome_accuracy.rda")) {
+        load("biome_accuracy.rda")
+      }
+      biome_accuracy$accuracy_logit <- 0
+      i = 0
+      logitList <- vector(mode="list", length=20)
+      for (column in colnames(y_train)) {
+        i = i + 1
+        print(column)
+        fm <- as.formula(paste(column, "~ (lat +	long +	alt +	temp2m + humidity + 
+                         precip +	atm +	wind + m.fapar)^2"))
+        fit <- glm(fm,family = "binomial",data = df)
+        
+        logit <- step(fit, direction = "backward",trace = 0)
+        print(summary(logit))
+        
+        logitList[[i]] <- logit
+        
+        #testing the logit model on the test data
+        pred <- predict(logit,X_test)
+        pred[pred > 0.5] = 1
+        pred[pred < 0.5] = 0
+        
+        xtab <- table(factor(pred, levels = c(0,1)), y_test[,which(colnames(y_test)==column)])
+        print(confusionMatrix(xtab))
+        biome_accuracy[i, "accuracy_logit"] = confusionMatrix(xtab)[[3]][[1]]
+      }
+      save(logitList, file = "logitList.rda")
+      
+      biome_accuracy$avg_accuracy_logit <- mean(biome_accuracy$accuracy_logit)
+      save(biome_accuracy, file = "biome_accuracy.rda")
+      
+      print("from logit")
+      print(biome_accuracy)
+    }
+  }
+  
+  initNnet <- function(){
+    
+  }
+  
+  
+  
+  
   
   # Raw page, data file display
   
@@ -125,10 +177,13 @@ server <- function(input, output, session) {
           
           #testing the logit model on the test data
           pred <- predict(logit,X_test)
-          print(table(Actual = y_test[,which(colnames(y_test)==column)], predict = pred > 0.5))
-          print(accuracy(y_test[,which(colnames(y_test)==column)], pred))
-          biome_accuracy[i, "accuracy_logit"] = accuracy(y_test[,which(colnames(y_test)==column)], pred)[,6]
-        }
+          pred[pred > 0.5] = 1
+          pred[pred < 0.5] = 0
+          
+          xtab <- table(factor(pred, levels = c(0,1)), y_test[,which(colnames(y_test)==column)])
+          print(confusionMatrix(xtab))
+          biome_accuracy[i, "accuracy_logit"] = confusionMatrix(xtab)[[3]][[1]]
+      }
         save(logitList, file = "logitList.rda")
         
         biome_accuracy$avg_accuracy_logit <- mean(biome_accuracy$accuracy_logit)
@@ -186,7 +241,9 @@ server <- function(input, output, session) {
           results <- data.frame(actual = df_test[, 9+i], prediction = predStr[,i])
           roundedresults<-sapply(results,round,digits=0)
           roundedresultsdf <- data.frame(roundedresults)
-          biome_accuracy[i, "accuracy_nnet"] <- accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
+          
+          xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+          biome_accuracy[i, "accuracy_nnet"] = confusionMatrix(xtab)[[3]][[1]]
         }
 
         biome_accuracy$avg_accuracy_nnet <- mean(biome_accuracy$accuracy_nnet)
@@ -220,7 +277,9 @@ server <- function(input, output, session) {
             results <- data.frame(actual = y_test[,i], prediction = mrfPred_y[,i])
             roundedresults<-sapply(results,round,digits=0)
             roundedresultsdf=data.frame(roundedresults)
-            biome_accuracy[i, "accuracy_MRF"] = accuracy(roundedresultsdf$actual, roundedresultsdf$prediction)[,6]
+            
+            xtab <- table(factor(roundedresultsdf$prediction, levels = c(0,1)), roundedresultsdf$actual)
+            biome_accuracy[i, "accuracy_MRF"] = confusionMatrix(xtab)[[3]][[1]]
           }
           
           biome_accuracy$avg_accuracy_MRF <- mean(biome_accuracy$accuracy_MRF)
