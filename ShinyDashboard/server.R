@@ -1,4 +1,3 @@
-
 # Required libraries
 
 suppressMessages(library(shiny))
@@ -14,10 +13,10 @@ suppressMessages(library(effects))
 suppressMessages(library(shinyjs))
 suppressMessages(library(isoband))
 
+# ######### Server Function #############
 server <- function(input, output, session) {
-  
+  # Train and Test data splitting
   df <- read.csv("brazilian_forest_data.csv", stringsAsFactors = T)
-  
   set.seed(100)
   s <- sample(nrow(df), round(.7*nrow(df)))
   train <- df[s,]
@@ -25,12 +24,10 @@ server <- function(input, output, session) {
   
   X_train <- train[1:9]
   X_test <- test[1:9]
-  
   y_train <- train[10:length(train)]
   y_test <- test[10:length(test)]
   
   # Normalise the data for Neural net
-  
   normalize <- function(x){
     return((x-min(x))/(max(x)-min(x)))
   }
@@ -39,8 +36,7 @@ server <- function(input, output, session) {
   df_train <- df_norm[1:606,]
   df_test <- df_norm[607:865,]
   
-  # checks for biome_accuracy file and other model files
-  
+  #checks for biome_accuracy file and other model files
   if(!file.exists("biome_accuracy.rda")) {
     biome_accuracy <- data.frame(colnames(y_test))
   }else{
@@ -59,8 +55,8 @@ server <- function(input, output, session) {
     biome_accuracy$accuracy_MRF <- 0
   }
   
+  # check if R objects of built model is present or not and if not then biuld the model and create the object files
   initLogit <- reactive({
-    
     if(file.exists("logitList.rda")) {
       ## load logistic regression model
       load("logitList.rda")
@@ -110,9 +106,7 @@ server <- function(input, output, session) {
       if(file.exists("biome_accuracy.rda")) {
         load("biome_accuracy.rda")
       }
-      
       set.seed(1000000)
-      
       nnet_model <- neuralnet(Campo_Rupestre + Cerrado_lato_sensu +
                                 + Floresta_de_Terra_Firme +
                                 Floresta_Estacional_Semidecidual +
@@ -160,7 +154,6 @@ server <- function(input, output, session) {
     if(file.exists("mrfPred.rda")) {
       ## load MRF model
       load("mrfPred.rda")
-      
     } else {
       if(file.exists("biome_accuracy.rda")) {
         load("biome_accuracy.rda")
@@ -170,7 +163,6 @@ server <- function(input, output, session) {
       min_leaf = 40
       mrfPred <- build_forest_predict(as.matrix(X_train), as.matrix(y_train), n_tree, 
                                       m_feature, min_leaf, as.matrix(X_test))
-      
       mrfPred_y <- mrfPred
       mrfPred_y[mrfPred_y > 0.5] = 1
       mrfPred_y[mrfPred_y < 0.5] = 0
@@ -194,6 +186,7 @@ server <- function(input, output, session) {
     }
   })
 
+  # initialize model building if called
   init <- reactive({
     initLogit()
     initNnet()
@@ -230,7 +223,6 @@ server <- function(input, output, session) {
   })
   
   # Model building and display summary
-  
   Cases <- reactive({
     if (input$selectedvariable=="Logistic") {
       if(file.exists("logitList.rda")) {
@@ -279,6 +271,7 @@ server <- function(input, output, session) {
     }
   })
   
+  # reactive function to observe for any event occurance and run the inside code
   observe({
     if(!file.exists("biome_accuracy.rda")) {
       init()
@@ -288,8 +281,10 @@ server <- function(input, output, session) {
     load("logitList.rda")
     
     lenGraphs <- length(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]]))
+    # creating the global variable
     logitEffectsPlotList <<- vector(mode = "list", length = lenGraphs)
     for (l in 1:lenGraphs) {
+      # assigning value to the global list variable
       logitEffectsPlotList[[l]] <<- names(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]])[l])
     }
     updateSelectInput(session = session ,inputId = "logitEffectsOptions", 
@@ -297,10 +292,11 @@ server <- function(input, output, session) {
     )
   })
   
+  # display effects plot
   output$effectsPlot <- renderPlot({
     listIndex <- match(input$logitEffectsOptions, logitEffectsPlotList)
     effectsNum <- as.numeric(listIndex)
-    
+    # delay for the loading of new parameters to avoid any errors
     if (is.na(listIndex))
       delay(50, plot(allEffects(logitList[[match(input$logitEffects,colnames(y_train))]])[listIndex]))
     else
@@ -372,6 +368,7 @@ server <- function(input, output, session) {
     girafePlot(val1, val2)
   })
   
+  # Dashboard bar plot
   output$accuracyBarPlot <- renderGirafe({
     if(file.exists("biome_accuracy.rda")) {
       load("biome_accuracy.rda")

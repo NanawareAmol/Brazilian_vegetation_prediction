@@ -24,8 +24,10 @@ options(spinner.color="#0275D8",
 
 body <- dashboardBody(
     tabItems(
+        # ######### Dashboard #############
         tabItem(
             tabName = "dashboard",
+            # ######### overall accuracy percentage panel #############
             fluidRow(
                 box(
                     width = 4,
@@ -46,6 +48,7 @@ body <- dashboardBody(
                     withSpinner(girafeOutput("mrfAccuracyPlot"), type = 2)
                 )
             ),
+            # ######### accuracy bar plot #############
             fluidRow(
                 box(
                     width = 12,
@@ -53,6 +56,7 @@ body <- dashboardBody(
                     withSpinner(girafeOutput("accuracyBarPlot"), type = 2)
                 )
             ),
+            # ######### Overall and individual accuracy table #############
             fluidRow(
                 box(
                     width = 12,
@@ -66,8 +70,10 @@ body <- dashboardBody(
                 )
             )
         ),
+        # ######### Detailed Analysis Page #############
         tabItem(
             tabName = "detailedAnalysis",
+            # ######### Dropdown menu #############
             fluidRow(
                 column(
                     4,
@@ -78,6 +84,7 @@ body <- dashboardBody(
                     )
                 ),width=2
             ),
+            # ######### Summary and graph panel #############
             mainPanel(
                 fluidRow(
                     tabBox(
@@ -109,6 +116,7 @@ body <- dashboardBody(
                             ),
                             withSpinner(plotOutput("effectsPlot"), type = 2)
                         ),
+                        # ######### css for styling the web elements #############
                         tags$head(tags$style("#Summary{overflow-y:scroll;
                                                  max-height: 460px; width: auto;
                                                  background: ghostwhite;}
@@ -134,6 +142,7 @@ body <- dashboardBody(
                 )
             )
         ),
+        # ######### Raw data page #############
         tabItem(
             tabName = "rawData",
             mainPanel(
@@ -153,6 +162,10 @@ body <- dashboardBody(
 )
     
 
+# ################################################################
+## assigning all the pages content ui code to the UI object using 
+## dashboardPage function 
+#################################################################
 
 
 ui <- dashboardPage(header, sidebar, body)
